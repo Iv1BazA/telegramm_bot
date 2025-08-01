@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:mybot/core/constants/role_enum.dart';
 import 'package:mybot/core/services/env_service.dart';
 import 'package:googleapis/sheets/v4.dart';
 import 'package:googleapis_auth/auth_io.dart';
@@ -82,6 +83,20 @@ class GoogleSheetsService {
         .toList();
   }
 
+  Future<void> inputRoleAdmin({
+    required String role,
+    required String userName,
+    required int userId,
+  }) async {
+    final values = [role, '@$userName', userId.toString()];
+    await _sheetsApi.spreadsheets.values.append(
+      ValueRange(values: [values]),
+      logsSpreadsheetId,
+      'Roles!A:C',
+      valueInputOption: 'USER_ENTERED',
+    );
+  }
+
   Future<void> logSilently({
     required String userName,
     required String role,
@@ -105,5 +120,35 @@ class GoogleSheetsService {
     } catch (e) {
       print('Ошибка при логировании: $e');
     }
+  }
+
+  Future<Map<int, RoleEnum>> loadRolesFromSheet() async {
+    final result = await _sheetsApi.spreadsheets.values.get(
+      logsSpreadsheetId,
+      'Roles!A:C',
+    );
+
+    final rows = result.values ?? [];
+
+    final roleMap = <int, RoleEnum>{};
+
+    for (final row in rows.skip(1)) {
+      // Пропускаем заголовок
+      if (row.length < 3) continue;
+
+      final roleStr = row[0]?.toString().trim().toLowerCase();
+      final tgIdStr = row[2]?.toString().trim();
+
+      final tgId = int.tryParse(tgIdStr ?? '');
+      if (tgId == null) continue;
+
+      if (roleStr == 'admin') {
+        roleMap[tgId] = RoleEnum.admin;
+      } else if (roleStr == 'super admin') {
+        roleMap[tgId] = RoleEnum.superAdmin;
+      }
+    }
+
+    return roleMap;
   }
 }

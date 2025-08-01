@@ -3,7 +3,6 @@ import 'package:mybot/core/services/google_sheets_service.dart';
 import 'package:televerse/televerse.dart';
 
 void historyCommand(Bot bot, GoogleSheetsService sheetsService) {
-  print('сработало');
   bot.command('history', (ctx) async {
     final id = ctx.id.id;
     print(id);

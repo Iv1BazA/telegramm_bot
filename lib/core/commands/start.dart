@@ -7,47 +7,69 @@ import 'package:televerse/televerse.dart';
 void startCommand(Bot bot, GoogleSheetsService sheetsService) {
   bot.command('start', (ctx) async {
     final userId = ctx.id;
-    final isCurrentAdmin = isAdmin(userId.id);
-    final isCurrentSuperAdmin = isSuperAdmin(userId.id);
+    final userIntId = userId.id;
+    final isCurrentAdmin = isAdmin(userIntId);
+    final isCurrentSuperAdmin = isSuperAdmin(userIntId);
     final userName = ctx.from?.firstName ?? '';
 
-    print("$userName написал: ${ctx.message?.text}");
+    List<List<InlineKeyboardButton>> keyboard = [];
 
-    // Базовые кнопки
-    final keyboard = [
-      [
-        InlineKeyboardButton(
-          text: '📥 Внести данные',
-          callbackData: RequestsData.put,
-        ),
-      ],
-      [
-        InlineKeyboardButton(
-          text: '📊 Статистика',
-          callbackData: RequestsData.stats,
-        ),
-      ],
-      [InlineKeyboardButton(text: '❓ Помощь', callbackData: RequestsData.help)],
-    ];
+    if (isCurrentAdmin || isCurrentSuperAdmin) {
+      // Полный доступ
+      keyboard = [
+        [
+          InlineKeyboardButton(
+            text: '📥 Внести данные',
+            callbackData: RequestsData.put,
+          ),
+        ],
+        [
+          InlineKeyboardButton(
+            text: '📊 Статистика',
+            callbackData: RequestsData.stats,
+          ),
+        ],
+        [
+          InlineKeyboardButton(
+            text: '❓ Помощь',
+            callbackData: RequestsData.help,
+          ),
+        ],
+      ];
 
-    // Добавим кнопку Истории, если суперадмин
-    if (isCurrentSuperAdmin) {
-      keyboard.add([
-        InlineKeyboardButton(
-          text: '📜 История',
-          callbackData: RequestsData.history,
-        ),
-      ]);
+      if (isCurrentSuperAdmin) {
+        keyboard.add([
+          InlineKeyboardButton(
+            text: '📜 История',
+            callbackData: RequestsData.history,
+          ),
+        ]);
+      }
+    } else {
+      keyboard = [
+        [
+          InlineKeyboardButton(
+            text: '📩 Запросить роль администратора',
+            callbackData: RequestsData.getRole,
+          ),
+        ],
+        [
+          InlineKeyboardButton(
+            text: '❓ Помощь',
+            callbackData: RequestsData.help,
+          ),
+        ],
+      ];
     }
 
     await ctx.reply(
-      "👋 Привет, уважаемый $userName!\nВыберите действие:",
+      "👋 Привет, $userName!\nВыберите действие:",
       replyMarkup: InlineKeyboardMarkup(inlineKeyboard: keyboard),
     );
 
     await sheetsService.logSilently(
       userName: ctx.from?.username ?? 'Unknown',
-      role: getNameUserRole(userId.id),
+      role: getNameUserRole(userIntId),
       action: ctx.message?.text ?? '',
     );
   });

@@ -6,18 +6,16 @@ import 'package:televerse/televerse.dart';
 void scheduleDailyReport(Bot bot, GoogleSheetsService sheetsService) {
   final cron = Cron();
 
-  cron.schedule(Schedule.parse('00 20 * * *'), () async {
-    print("📤 Начинаем ежедневную рассылку отчётов...");
-
+  cron.schedule(Schedule.parse('00 21 * * *'), () async {
     // Получаем список ID из .env
-    // final adminIdsRaw = EnvService.get('ADMINS');
+    final adminIdsRaw = EnvService.get('ADMINS');
     final superAdminIdsRaw = EnvService.get('SUPER_ADMINS');
 
-    // final adminIds = _parseIds(adminIdsRaw);
+    final adminIds = _parseIds(adminIdsRaw);
     final superAdminIds = _parseIds(superAdminIdsRaw);
 
     // Объединяем и удаляем дубликаты
-    final allIds = {...superAdminIds}.toList(); //...adminIds
+    final allIds = {...adminIds, ...superAdminIds}.toList();
 
     for (final id in allIds) {
       try {
@@ -41,7 +39,6 @@ void scheduleDailyReport(Bot bot, GoogleSheetsService sheetsService) {
   });
 }
 
-// Преобразование строки вида "12345,67890" в List<int>
 List<int> _parseIds(String? raw) {
   if (raw == null || raw.trim().isEmpty) return [];
   return raw

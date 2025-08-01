@@ -1,33 +1,19 @@
 import 'package:mybot/core/constants/role_enum.dart';
-import 'package:mybot/core/services/env_service.dart';
+import 'package:mybot/core/services/google_sheets_service.dart';
 
 abstract class RoleClass {
-  static final Map<int, RoleEnum> userRoles = _loadRoles();
+  static Map<int, RoleEnum> userRoles = {};
 
-  static Map<int, RoleEnum> _loadRoles() {
-    final admins = EnvService.get('ADMINS');
-    final superAdmins = EnvService.get('SUPER_ADMINS');
-
-    final adminIds = admins
-        .split(',')
-        .where((e) => e.trim().isNotEmpty)
-        .map(int.parse);
-    final superAdminIds = superAdmins
-        .split(',')
-        .where((e) => e.trim().isNotEmpty)
-        .map(int.parse);
-
-    final map = <int, RoleEnum>{};
-
-    for (var id in adminIds) {
-      map[id] = RoleEnum.admin;
-    }
-    for (var id in superAdminIds) {
-      map[id] = RoleEnum.superAdmin;
-    }
-
-    return map;
+  static Future<void> initialize(GoogleSheetsService service) async {
+    userRoles = await service.loadRolesFromSheet();
   }
+}
+
+List<int> getSuperAdmins() {
+  return RoleClass.userRoles.entries
+      .where((entry) => entry.value == RoleEnum.superAdmin)
+      .map((entry) => entry.key)
+      .toList();
 }
 
 bool isAdmin(int userId) {

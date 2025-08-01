@@ -1,10 +1,12 @@
 import 'package:mybot/core/commands/daily_report.dart';
+import 'package:mybot/core/commands/get_role.dart';
 import 'package:mybot/core/commands/help.dart';
 import 'package:mybot/core/commands/history.dart';
 import 'package:mybot/core/commands/put.dart';
 import 'package:mybot/core/commands/start.dart';
 import 'package:mybot/core/commands/stats.dart';
 import 'package:mybot/core/constants/config.dart';
+import 'package:mybot/core/constants/role.dart';
 import 'package:mybot/core/constants/states.dart';
 import 'package:mybot/core/services/env_service.dart';
 import 'package:mybot/core/services/google_sheets_service.dart';
@@ -16,7 +18,9 @@ final sessions = <int, SessionState>{};
 
 void main() async {
   EnvService.load();
-  sheetsService = await GoogleSheetsService.create();
+  final sheetsService = await GoogleSheetsService.create();
+  await RoleClass.initialize(sheetsService);
+
   final bot = Bot(AppConfig.botId);
 
   // /START
@@ -36,6 +40,9 @@ void main() async {
 
   //Рассылка
   scheduleDailyReport(bot, sheetsService);
+
+  //GET ROLE
+  getRoleCommand(bot, sheetsService);
 
   // CALLBACK
   callBackService(bot, sheetsService);

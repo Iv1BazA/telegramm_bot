@@ -17,6 +17,8 @@ abstract class RequestsData {
   static String help = 'help_data';
   static String stats = 'stats_data';
   static String history = 'history_data';
+  static String dailyReport = 'daily_report_data';
+  static String getRole = 'get_role_data';
 }
 
 final Map<String, String> commandAliases = {
