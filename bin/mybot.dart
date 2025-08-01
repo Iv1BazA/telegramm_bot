@@ -1,3 +1,4 @@
+import 'package:mybot/core/commands/daily_report.dart';
 import 'package:mybot/core/commands/help.dart';
 import 'package:mybot/core/commands/history.dart';
 import 'package:mybot/core/commands/put.dart';
@@ -32,6 +33,9 @@ void main() async {
 
   //HISTORY
   historyCommand(bot, sheetsService);
+
+  //Рассылка
+  scheduleDailyReport(bot, sheetsService);
 
   // CALLBACK
   callBackService(bot, sheetsService);

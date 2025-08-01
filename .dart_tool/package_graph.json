@@ -7,6 +7,7 @@
       "name": "mybot",
       "version": "1.0.0",
       "dependencies": [
+        "cron",
         "dotenv",
         "googleapis",
         "googleapis_auth",
@@ -56,11 +57,28 @@
       "dependencies": []
     },
     {
+      "name": "cron",
+      "version": "0.6.2",
+      "dependencies": [
+        "clock"
+      ]
+    },
+    {
       "name": "dotenv",
       "version": "4.2.0",
       "dependencies": [
         "args",
         "meta"
+      ]
+    },
+    {
+      "name": "http",
+      "version": "1.4.0",
+      "dependencies": [
+        "async",
+        "http_parser",
+        "meta",
+        "web"
       ]
     },
     {
@@ -75,6 +93,14 @@
       ]
     },
     {
+      "name": "googleapis",
+      "version": "11.4.0",
+      "dependencies": [
+        "_discoveryapis_commons",
+        "http"
+      ]
+    },
+    {
       "name": "televerse",
       "version": "2.7.0",
       "dependencies": [
@@ -82,37 +108,6 @@
         "freezed",
         "freezed_annotation",
         "json_annotation"
-      ]
-    },
-    {
-      "name": "args",
-      "version": "2.7.0",
-      "dependencies": []
-    },
-    {
-      "name": "crypto",
-      "version": "3.0.6",
-      "dependencies": [
-        "typed_data"
-      ]
-    },
-    {
-      "name": "json_annotation",
-      "version": "4.9.0",
-      "dependencies": [
-        "meta"
-      ]
-    },
-    {
-      "name": "dio",
-      "version": "5.8.0+1",
-      "dependencies": [
-        "async",
-        "collection",
-        "dio_web_adapter",
-        "http_parser",
-        "meta",
-        "path"
       ]
     },
     {
@@ -351,8 +346,41 @@
       ]
     },
     {
+      "name": "analyzer",
+      "version": "7.7.1",
+      "dependencies": [
+        "_fe_analyzer_shared",
+        "collection",
+        "convert",
+        "crypto",
+        "glob",
+        "meta",
+        "package_config",
+        "path",
+        "pub_semver",
+        "source_span",
+        "watcher",
+        "yaml"
+      ]
+    },
+    {
+      "name": "clock",
+      "version": "1.1.2",
+      "dependencies": []
+    },
+    {
       "name": "meta",
       "version": "1.17.0",
+      "dependencies": []
+    },
+    {
+      "name": "args",
+      "version": "2.7.0",
+      "dependencies": []
+    },
+    {
+      "name": "web",
+      "version": "1.1.1",
       "dependencies": []
     },
     {
@@ -363,6 +391,74 @@
         "source_span",
         "string_scanner",
         "typed_data"
+      ]
+    },
+    {
+      "name": "google_identity_services_web",
+      "version": "0.3.3+1",
+      "dependencies": [
+        "meta",
+        "web"
+      ]
+    },
+    {
+      "name": "crypto",
+      "version": "3.0.6",
+      "dependencies": [
+        "typed_data"
+      ]
+    },
+    {
+      "name": "_discoveryapis_commons",
+      "version": "1.0.7",
+      "dependencies": [
+        "http",
+        "http_parser",
+        "meta"
+      ]
+    },
+    {
+      "name": "json_annotation",
+      "version": "4.9.0",
+      "dependencies": [
+        "meta"
+      ]
+    },
+    {
+      "name": "freezed_annotation",
+      "version": "3.1.0",
+      "dependencies": [
+        "collection",
+        "json_annotation",
+        "meta"
+      ]
+    },
+    {
+      "name": "freezed",
+      "version": "3.2.0",
+      "dependencies": [
+        "analyzer",
+        "build",
+        "build_config",
+        "collection",
+        "dart_style",
+        "freezed_annotation",
+        "json_annotation",
+        "meta",
+        "pub_semver",
+        "source_gen"
+      ]
+    },
+    {
+      "name": "dio",
+      "version": "5.8.0+1",
+      "dependencies": [
+        "async",
+        "collection",
+        "dio_web_adapter",
+        "http_parser",
+        "meta",
+        "path"
       ]
     },
     {
@@ -383,11 +479,6 @@
       "dependencies": [
         "web"
       ]
-    },
-    {
-      "name": "web",
-      "version": "1.1.1",
-      "dependencies": []
     },
     {
       "name": "vm_service",
@@ -455,62 +546,39 @@
       ]
     },
     {
-      "name": "file",
-      "version": "7.0.1",
+      "name": "watcher",
+      "version": "1.1.2",
       "dependencies": [
-        "meta",
+        "async",
         "path"
       ]
     },
     {
-      "name": "google_identity_services_web",
-      "version": "0.3.3+1",
+      "name": "pub_semver",
+      "version": "2.2.0",
       "dependencies": [
-        "meta",
-        "web"
+        "collection"
       ]
     },
     {
-      "name": "freezed_annotation",
-      "version": "3.1.0",
+      "name": "_fe_analyzer_shared",
+      "version": "85.0.0",
       "dependencies": [
-        "collection",
-        "json_annotation",
         "meta"
       ]
     },
     {
-      "name": "http",
-      "version": "1.4.0",
-      "dependencies": [
-        "async",
-        "http_parser",
-        "meta",
-        "web"
-      ]
-    },
-    {
-      "name": "googleapis",
-      "version": "11.4.0",
-      "dependencies": [
-        "_discoveryapis_commons",
-        "http"
-      ]
-    },
-    {
-      "name": "freezed",
-      "version": "3.2.0",
+      "name": "dart_style",
+      "version": "3.1.1",
       "dependencies": [
         "analyzer",
-        "build",
-        "build_config",
+        "args",
         "collection",
-        "dart_style",
-        "freezed_annotation",
-        "json_annotation",
-        "meta",
+        "package_config",
+        "path",
         "pub_semver",
-        "source_gen"
+        "source_span",
+        "yaml"
       ]
     },
     {
@@ -529,10 +597,14 @@
       ]
     },
     {
-      "name": "pub_semver",
-      "version": "2.2.0",
+      "name": "build_config",
+      "version": "1.1.2",
       "dependencies": [
-        "collection"
+        "checked_yaml",
+        "json_annotation",
+        "path",
+        "pubspec_parse",
+        "yaml"
       ]
     },
     {
@@ -551,6 +623,61 @@
         "logging",
         "package_config",
         "path"
+      ]
+    },
+    {
+      "name": "dio_web_adapter",
+      "version": "2.1.1",
+      "dependencies": [
+        "dio",
+        "http_parser",
+        "meta",
+        "web"
+      ]
+    },
+    {
+      "name": "file",
+      "version": "7.0.1",
+      "dependencies": [
+        "meta",
+        "path"
+      ]
+    },
+    {
+      "name": "pubspec_parse",
+      "version": "1.5.0",
+      "dependencies": [
+        "checked_yaml",
+        "collection",
+        "json_annotation",
+        "pub_semver",
+        "yaml"
+      ]
+    },
+    {
+      "name": "checked_yaml",
+      "version": "2.0.4",
+      "dependencies": [
+        "json_annotation",
+        "source_span",
+        "yaml"
+      ]
+    },
+    {
+      "name": "graphs",
+      "version": "2.3.2",
+      "dependencies": [
+        "collection"
+      ]
+    },
+    {
+      "name": "built_value",
+      "version": "8.11.0",
+      "dependencies": [
+        "built_collection",
+        "collection",
+        "fixnum",
+        "meta"
       ]
     },
     {
@@ -587,11 +714,15 @@
       ]
     },
     {
-      "name": "watcher",
-      "version": "1.1.2",
+      "name": "fixnum",
+      "version": "1.1.1",
+      "dependencies": []
+    },
+    {
+      "name": "timing",
+      "version": "1.0.2",
       "dependencies": [
-        "async",
-        "path"
+        "json_annotation"
       ]
     },
     {
@@ -644,97 +775,19 @@
       ]
     },
     {
-      "name": "build_config",
-      "version": "1.1.2",
-      "dependencies": [
-        "checked_yaml",
-        "json_annotation",
-        "path",
-        "pubspec_parse",
-        "yaml"
-      ]
-    },
-    {
-      "name": "built_value",
-      "version": "8.11.0",
-      "dependencies": [
-        "built_collection",
-        "collection",
-        "fixnum",
-        "meta"
-      ]
-    },
-    {
-      "name": "timing",
-      "version": "1.0.2",
-      "dependencies": [
-        "json_annotation"
-      ]
-    },
-    {
-      "name": "analyzer",
-      "version": "7.7.1",
-      "dependencies": [
-        "_fe_analyzer_shared",
-        "collection",
-        "convert",
-        "crypto",
-        "glob",
-        "meta",
-        "package_config",
-        "path",
-        "pub_semver",
-        "source_span",
-        "watcher",
-        "yaml"
-      ]
-    },
-    {
-      "name": "_fe_analyzer_shared",
-      "version": "85.0.0",
-      "dependencies": [
-        "meta"
-      ]
-    },
-    {
-      "name": "dart_style",
-      "version": "3.1.1",
-      "dependencies": [
-        "analyzer",
-        "args",
-        "collection",
-        "package_config",
-        "path",
-        "pub_semver",
-        "source_span",
-        "yaml"
-      ]
-    },
-    {
-      "name": "graphs",
-      "version": "2.3.2",
-      "dependencies": [
-        "collection"
-      ]
-    },
-    {
       "name": "stream_transform",
       "version": "2.1.1",
       "dependencies": []
     },
     {
-      "name": "fixnum",
-      "version": "1.1.1",
-      "dependencies": []
-    },
-    {
-      "name": "dio_web_adapter",
-      "version": "2.1.1",
+      "name": "code_builder",
+      "version": "4.10.1",
       "dependencies": [
-        "dio",
-        "http_parser",
-        "meta",
-        "web"
+        "built_collection",
+        "built_value",
+        "collection",
+        "matcher",
+        "meta"
       ]
     },
     {
@@ -753,46 +806,6 @@
         "stream_transform",
         "watcher",
         "web_socket_channel"
-      ]
-    },
-    {
-      "name": "checked_yaml",
-      "version": "2.0.4",
-      "dependencies": [
-        "json_annotation",
-        "source_span",
-        "yaml"
-      ]
-    },
-    {
-      "name": "_discoveryapis_commons",
-      "version": "1.0.7",
-      "dependencies": [
-        "http",
-        "http_parser",
-        "meta"
-      ]
-    },
-    {
-      "name": "pubspec_parse",
-      "version": "1.5.0",
-      "dependencies": [
-        "checked_yaml",
-        "collection",
-        "json_annotation",
-        "pub_semver",
-        "yaml"
-      ]
-    },
-    {
-      "name": "code_builder",
-      "version": "4.10.1",
-      "dependencies": [
-        "built_collection",
-        "built_value",
-        "collection",
-        "matcher",
-        "meta"
       ]
     }
   ],

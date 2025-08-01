@@ -98,6 +98,12 @@
       "languageVersion": "3.0"
     },
     {
+      "name": "clock",
+      "rootUri": "file:///Users/ivanzelensky/.pub-cache/hosted/pub.dev/clock-1.1.2",
+      "packageUri": "lib/",
+      "languageVersion": "3.4"
+    },
+    {
       "name": "code_builder",
       "rootUri": "file:///Users/ivanzelensky/.pub-cache/hosted/pub.dev/code_builder-4.10.1",
       "packageUri": "lib/",
@@ -120,6 +126,12 @@
       "rootUri": "file:///Users/ivanzelensky/.pub-cache/hosted/pub.dev/coverage-1.15.0",
       "packageUri": "lib/",
       "languageVersion": "3.4"
+    },
+    {
+      "name": "cron",
+      "rootUri": "file:///Users/ivanzelensky/.pub-cache/hosted/pub.dev/cron-0.6.2",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
     },
     {
       "name": "crypto",
