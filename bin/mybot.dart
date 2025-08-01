@@ -1,4 +1,5 @@
 import 'package:mybot/core/commands/help.dart';
+import 'package:mybot/core/commands/history.dart';
 import 'package:mybot/core/commands/put.dart';
 import 'package:mybot/core/commands/start.dart';
 import 'package:mybot/core/commands/stats.dart';
@@ -18,23 +19,31 @@ void main() async {
   final bot = Bot(AppConfig.botId);
 
   // /START
-  startCommand(bot);
+  startCommand(bot, sheetsService);
 
   // /PUT
   putCommand(bot, sheetsService);
 
   // /HELP
-  helpCommand(bot);
+  helpCommand(bot, sheetsService);
 
   //STATS
-  statsCommand(bot);
+  statsCommand(bot, sheetsService);
+
+  //HISTORY
+  historyCommand(bot, sheetsService);
 
   // CALLBACK
   callBackService(bot, sheetsService);
 
+  bot.onMessage((ctx) {
+    print("Получено сообщение: ${ctx.message?.text}");
+  });
+
   //для контроля сессии
   bot.onText((ctx) async {
     final id = ctx.id.id;
+    if ((ctx.message?.text ?? '').startsWith('/')) return;
 
     if (sessions.containsKey(id)) {
       await handlePutText(ctx, sheetsService);

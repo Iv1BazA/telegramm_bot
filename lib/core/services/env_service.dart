@@ -13,7 +13,6 @@ class EnvService {
     if (value == null) {
       throw Exception("Environment variable '$key' is not set.");
     }
-    print(value);
     return value;
   }
 }

@@ -8,8 +8,13 @@ class GoogleSheetsService {
 
   final SheetsApi _sheetsApi;
   final String spreadsheetId;
+  final String logsSpreadsheetId;
 
-  GoogleSheetsService._(this._sheetsApi, this.spreadsheetId);
+  GoogleSheetsService._(
+    this._sheetsApi,
+    this.spreadsheetId,
+    this.logsSpreadsheetId,
+  );
 
   static Future<GoogleSheetsService> create() async {
     final credentialsPath = EnvService.get("GOOGLE_CREDENTIALS_PATH");
@@ -20,11 +25,17 @@ class GoogleSheetsService {
     final sheetsApi = SheetsApi(authClient);
 
     final spreadsheetId = EnvService.get('SPREEDSHEET_ID');
+    final logsSpreadsheetId = EnvService.get('SPREEDSHEET_LOGS_ID');
+
     if (spreadsheetId == null || spreadsheetId.isEmpty) {
-      throw Exception('Spreadsheet ID is not set in .env');
+      throw Exception('SPREEDSHEET_ID is not set in .env');
     }
 
-    return GoogleSheetsService._(sheetsApi, spreadsheetId);
+    if (logsSpreadsheetId == null || logsSpreadsheetId.isEmpty) {
+      throw Exception('SPREEDSHEET_LOGS_ID is not set in .env');
+    }
+
+    return GoogleSheetsService._(sheetsApi, spreadsheetId, logsSpreadsheetId);
   }
 
   Future<List<String>> listSheets() async {
@@ -47,10 +58,52 @@ class GoogleSheetsService {
     final valueRange = ValueRange(values: [values]);
 
     await _sheetsApi.spreadsheets.values.append(
-      valueRange,
-      spreadsheetId,
-      range,
+      ValueRange(values: [values]),
+      logsSpreadsheetId,
+      'Logs!A:E',
       valueInputOption: 'USER_ENTERED',
     );
+  }
+
+  Future<List<List<String>>> getTodayLogs() async {
+    final now = DateTime.now();
+    final today =
+        '${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}';
+
+    final result = await _sheetsApi.spreadsheets.values.get(
+      logsSpreadsheetId,
+      'Logs!A:E',
+    );
+
+    final rows = result.values ?? [];
+    return rows
+        .where((row) => row.length >= 4 && row[3] == today)
+        .map((row) => row.map((e) => e?.toString() ?? '').toList())
+        .toList();
+  }
+
+  Future<void> logSilently({
+    required String userName,
+    required String role,
+    required String action,
+  }) async {
+    try {
+      final now = DateTime.now();
+      final date =
+          '${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}';
+      final time =
+          '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}';
+
+      final values = [userName, role, action, date, time];
+
+      await _sheetsApi.spreadsheets.values.append(
+        ValueRange(values: [values]),
+        logsSpreadsheetId,
+        'Logs!A:E',
+        valueInputOption: 'USER_ENTERED',
+      );
+    } catch (e) {
+      print('Ошибка при логировании: $e');
+    }
   }
 }

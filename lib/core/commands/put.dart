@@ -4,75 +4,29 @@ import 'package:mybot/core/services/google_sheets_service.dart';
 import 'package:televerse/telegram.dart';
 import 'package:televerse/televerse.dart';
 
+final sessions = <int, SessionState>{};
+
 void putCommand(Bot bot, GoogleSheetsService sheetsService) {
   bot.command('put', (ctx) async {
-    final id = ctx.id;
-    print("${ctx.from?.firstName ?? ""} написал: ${ctx.message?.text} ");
-    if (!isAdmin(id.id)) {
-      await ctx.reply("У вас нет прав.");
+    final id = ctx.id.id;
+
+    if (!isAdmin(id)) {
+      await ctx.reply("🚫 У вас нет прав.");
       return;
     }
 
-    final sheets = await sheetsService.listSheets();
-    final buttons = sheets.map((s) => KeyboardButton(text: s)).toList();
-
-    sessions[id.id] = SessionState();
-
-    await ctx.reply(
-      "Выберите лист:",
-      replyMarkup: ReplyKeyboardMarkup(
-        keyboard: [buttons],
-        resizeKeyboard: true,
-      ),
-    );
+    await handlePut(ctx, sheetsService);
   });
 
   bot.onText((ctx) async {
     final id = ctx.id.id;
-    final text = ctx.message?.text ?? '';
-    print('User message from id: $id message: $text');
-    final session = sessions[id];
-
-    if (session == null) return;
-
-    if (session.selectedSheet == null) {
-      session.selectedSheet = text;
-      session.fields = await sheetsService.getColumnNames(text);
-
-      if (session.fields == null || session.fields!.isEmpty) {
-        ctx.reply("Ошибка: лист не содержит заголовков.");
-        sessions.remove(id);
-        return;
-      }
-
-      ctx.reply(
-        "Введите значение для: ${session.fields![0]}",
-        replyMarkup: ReplyKeyboardRemove(),
-      );
-
-      return;
-    }
-
-    final field = session.fields![session.currentFieldIndex];
-    session.values[field] = text;
-    session.currentFieldIndex++;
-
-    if (session.currentFieldIndex >= session.fields!.length) {
-      await sheetsService.appendRow(
-        session.selectedSheet!,
-        session.fields!.map((f) => session.values[f] ?? '').toList(),
-      );
-      ctx.reply("✅ Данные успешно добавлены в '${session.selectedSheet}'");
-      sessions.remove(id);
-    } else {
-      final nextField = session.fields![session.currentFieldIndex];
-      ctx.reply("Введите значение для: $nextField");
+    if (sessions.containsKey(id)) {
+      await handlePutText(ctx, sheetsService);
     }
   });
 }
 
-final sessions = <int, SessionState>{};
-
+// Выбор листа
 Future<void> handlePut(Context ctx, GoogleSheetsService sheetsService) async {
   final id = ctx.id.id;
 
@@ -81,13 +35,18 @@ Future<void> handlePut(Context ctx, GoogleSheetsService sheetsService) async {
 
   sessions[id] = SessionState();
 
+  await sheetsService.logSilently(
+    userName: ctx.from?.username ?? ctx.from?.firstName ?? 'Unknown',
+    role: getNameUserRole(id),
+    action: ctx.message?.text ?? '',
+  );
+
   await ctx.reply(
-    "Выберите лист:",
+    "📄 Выберите лист:",
     replyMarkup: ReplyKeyboardMarkup(keyboard: [buttons], resizeKeyboard: true),
   );
 }
 
-// для обработки текстов в main (где бот.onText)
 Future<void> handlePutText(
   Context ctx,
   GoogleSheetsService sheetsService,
@@ -96,38 +55,76 @@ Future<void> handlePutText(
   final text = ctx.message?.text ?? '';
   final session = sessions[id];
 
+  // ⛔️ Обработка отмены
+  if (text == '❌ Отмена') {
+    sessions.remove(id);
+    await ctx.reply("❌ Ввод отменён.", replyMarkup: ReplyKeyboardRemove());
+    return;
+  }
+
+  // ⛔️ Если сессии нет — игнор
   if (session == null) return;
 
+  await sheetsService.logSilently(
+    userName: ctx.from?.username ?? ctx.from?.firstName ?? 'Unknown',
+    role: getNameUserRole(id),
+    action: text,
+  );
+
+  // 📄 Этап выбора листа
   if (session.selectedSheet == null) {
     session.selectedSheet = text;
     session.fields = await sheetsService.getColumnNames(text);
 
     if (session.fields == null || session.fields!.isEmpty) {
-      await ctx.reply("Ошибка: лист не содержит заголовков.");
+      await ctx.reply("⚠️ Ошибка: лист не содержит заголовков.");
       sessions.remove(id);
       return;
     }
 
     await ctx.reply(
-      "Введите значение для: ${session.fields![0]}",
-      replyMarkup: ReplyKeyboardRemove(),
+      "✏️ Введите значение для: ${session.fields![0]}",
+      replyMarkup: ReplyKeyboardMarkup(
+        keyboard: [
+          [KeyboardButton(text: '❌ Отмена')],
+        ],
+        resizeKeyboard: true,
+      ),
     );
     return;
   }
 
+  // ✍️ Ввод значений
   final field = session.fields![session.currentFieldIndex];
   session.values[field] = text;
   session.currentFieldIndex++;
 
+  // ✅ Финальный шаг
   if (session.currentFieldIndex >= session.fields!.length) {
     await sheetsService.appendRow(
       session.selectedSheet!,
       session.fields!.map((f) => session.values[f] ?? '').toList(),
     );
+
     await ctx.reply("✅ Данные успешно добавлены в '${session.selectedSheet}'");
+
+    await sheetsService.logSilently(
+      userName: ctx.from?.username ?? ctx.from?.firstName ?? 'Unknown',
+      role: getNameUserRole(id),
+      action: "Добавил данные в лист ${session.selectedSheet}",
+    );
+
     sessions.remove(id);
   } else {
     final nextField = session.fields![session.currentFieldIndex];
-    await ctx.reply("Введите значение для: $nextField");
+    await ctx.reply(
+      "✏️ Введите значение для: $nextField",
+      replyMarkup: ReplyKeyboardMarkup(
+        keyboard: [
+          [KeyboardButton(text: '❌ Отмена')],
+        ],
+        resizeKeyboard: true,
+      ),
+    );
   }
 }
