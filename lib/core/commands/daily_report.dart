@@ -28,9 +28,9 @@ void scheduleDailyReport(Bot bot, GoogleSheetsService sheetsService) {
         );
 
         await sheetsService.logSilently(
-          userName: id.toString(),
-          role: 'Auto',
-          action: '[Авторассылка] Отправлен вечерний отчёт',
+          userName: 'Bot',
+          role: 'Super Admin',
+          action: '/report',
         );
       } catch (e) {
         print("❌ Ошибка при отправке пользователю $id: $e");
